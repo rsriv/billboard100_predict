@@ -15,8 +15,8 @@ import numpy as np
 class NeuralNetwork:
     def __init__(self):
         np.random.seed(1)
-        NeuralNetwork.Theta1 = np.matrix(np.random.rand(25, 4))
-        NeuralNetwork.Theta2 = np.matrix(np.random.rand(1, 25))
+        NeuralNetwork.Theta1 = np.matrix(np.random.rand(20, 4))
+        NeuralNetwork.Theta2 = np.matrix(np.random.rand(100, 20))
 
     def predict(self, X):
         #forward propogation
@@ -24,8 +24,14 @@ class NeuralNetwork:
         z2 = a1 * self.Theta1.T
         a2 = self.__sigmoid(z2)
         z3 = a2 * self.Theta2.T
-        h = z3
-        return h
+        a3 = self.__sigmoid(z3)
+        h = np.matrix(np.zeros(a3.T.shape))
+        max_index = np.argmax(a3.T)
+        h[max_index] = np.matrix('1')
+        print 'h.shape'
+        print h[max_index].shape
+        #CHANGE HERE TO get set max from output to 1 and rest to 0
+        return h.T
 
     def train(self, X, Y, num_iter):
         for i in xrange(num_iter):
@@ -33,21 +39,32 @@ class NeuralNetwork:
             z2 = a1 * self.Theta1.T
             a2 = self.__sigmoid(z2)
             z3 = a2 * self.Theta2.T
-            print z3
-            output = z3
+            a3 = self.__sigmoid(z3)
+            print a3.shape
+            h = np.matrix(np.zeros(a3.T.shape))
+            for j in range(0,h.shape[1]):
+                h[:,j][np.argmax(a3.T[:,j])] = np.matrix('1')# column
+            h = h.T
+            #print z3
+            output = h
+            #CHANGE HERE TO get set max from output to 1 and rest to 0
+            print 'Output'
+            print output
+
             delta_3 = Y - output
-            delta_2 = np.multiply(delta_3*self.Theta2, self.__sigmoid_gradient(z2)) #delta_2 is messed up
+            delta_2 = np.multiply(delta_3 * self.Theta2, self.__sigmoid_gradient(z2))
 
             print 'delta2'
             print delta_2
 
+            Theta2_grad = np.matrix(np.zeros(self.Theta2.shape))
             Theta2_grad = delta_3.T * a2
             Theta1_grad = delta_2.T * a1
             Theta2_grad /= float(X.shape[0])
             Theta1_grad /= float(X.shape[0])
 
-            print 'Theta1_Grad'
-            print Theta1_grad
+            print 'Theta2_Grad'
+            print Theta2_grad
 
             NeuralNetwork.Theta2 += Theta2_grad
             NeuralNetwork.Theta1 += Theta1_grad
@@ -82,15 +99,28 @@ if __name__ == '__main__':
     X = np.matrix(xdata)
     Y = np.matrix(ydata)
 
-    neural_network.train(X, Y, 10000)
+    neural_network.train(X, Y, 1000)
 
     print 'After Training Theta1'
     print NeuralNetwork.Theta1
     print 'After Training Theta2'
     print NeuralNetwork.Theta2
 
-    print 'Predicting [6 2 3 3]'
-    print neural_network.predict(np.matrix('6 2 3 3'))
+    #print 'Predicting [91 2 90 1]'
+    #print neural_network.predict(np.matrix('91 2 90 1'))
+    #print neural_network.predict(np.matrix('91 2 90 1')).shape
+    print 'Predicted [91 2 90 1]'
+    print np.argmax(neural_network.predict(np.matrix('91 2 90 1')))+1
+
+    #print 'Predicting [3 12 2 1]'
+    #print neural_network.predict(np.matrix('3 12 2 1'))
+    #print neural_network.predict(np.matrix('91 2 90 1')).shape
+    print 'Predicted [3 12 2 1]'
+    print np.argmax(neural_network.predict(np.matrix('3 12 2 1')))+1
+
+    print 'Predicted [50 7 48 2]'
+    print np.argmax(neural_network.predict(np.matrix('50 7 48 2')))+1
+
 
     print 'theta_1'
     print t1

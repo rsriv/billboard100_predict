@@ -42,8 +42,9 @@ def init_input(n):
 
         for j in range(i, 100):
             song_current = chart_current[j]
-            y = np.matrix([song_current.rank])
-
+            y = np.matrix(np.zeros((100,1)))
+            y[song_current.rank-1] = np.matrix('1')
+            y = y.T
             if song_current.lastPos == 0:
                 continue
 
@@ -65,11 +66,12 @@ def init_input(n):
             else:
                 X = np.concatenate((X, x))
         count += 1
-        print X
-    print X.shape
-    print X
+        #print X
+        print Y.shape
+    #print X.shape
+    #print X
     print Y.shape
-    print X.shape
+    #print X.shape
     np.savetxt(yfile, Y, fmt="%d", comments='')
     np.savetxt(xfile, X, fmt="%d", comments='')
     xfile.close()
