@@ -24,14 +24,10 @@ class NeuralNetwork:
         z2 = a1 * self.Theta1.T
         a2 = self.__sigmoid(z2)
         z3 = a2 * self.Theta2.T
-        a3 = self.__sigmoid(z3)
-        h = np.matrix(np.zeros(a3.T.shape))
-        max_index = np.argmax(a3.T)
-        h[max_index] = np.matrix('1')
-        print 'h.shape'
-        print h[max_index].shape
+        h = self.__sigmoid(z3)
         #CHANGE HERE TO get set max from output to 1 and rest to 0
-        return h.T
+        rank = np.argmax(h)+1
+        return rank
 
     def train(self, X, Y, num_iter):
         for i in xrange(num_iter):
@@ -40,15 +36,10 @@ class NeuralNetwork:
             a2 = self.__sigmoid(z2)
             z3 = a2 * self.Theta2.T
             a3 = self.__sigmoid(z3)
-            print a3.shape
-            h = np.matrix(np.zeros(a3.T.shape))
-            for j in range(0,h.shape[1]):
-                h[:,j][np.argmax(a3.T[:,j])] = np.matrix('1')# column
-            h = h.T
             #print z3
-            output = h
+            output = a3
             #CHANGE HERE TO get set max from output to 1 and rest to 0
-            print 'Output'
+            print 'Output iteration '+ str(i)
             print output
 
             delta_3 = Y - output
@@ -99,27 +90,33 @@ if __name__ == '__main__':
     X = np.matrix(xdata)
     Y = np.matrix(ydata)
 
-    neural_network.train(X, Y, 1000)
+    neural_network.train(X, Y, 10000)
 
     print 'After Training Theta1'
     print NeuralNetwork.Theta1
     print 'After Training Theta2'
     print NeuralNetwork.Theta2
 
-    #print 'Predicting [91 2 90 1]'
-    #print neural_network.predict(np.matrix('91 2 90 1'))
-    #print neural_network.predict(np.matrix('91 2 90 1')).shape
-    print 'Predicted [91 2 90 1]'
-    print np.argmax(neural_network.predict(np.matrix('91 2 90 1')))+1
+    #print 'Predicting [3 20 2 1]'
+    #print neural_network.predict(np.matrix('91 20 90 1'))
+    #print neural_network.predict(np.matrix('3 20 2 1')).shape
+    print 'Predicted [3 20 2 1]'
+    print neural_network.predict(np.matrix('3 20 2 1'))
 
-    #print 'Predicting [3 12 2 1]'
-    #print neural_network.predict(np.matrix('3 12 2 1'))
-    #print neural_network.predict(np.matrix('91 2 90 1')).shape
-    print 'Predicted [3 12 2 1]'
-    print np.argmax(neural_network.predict(np.matrix('3 12 2 1')))+1
+    print 'Predicted [99 30 98 1]'
+    print neural_network.predict(np.matrix('99 30 98 1'))
 
-    print 'Predicted [50 7 48 2]'
-    print np.argmax(neural_network.predict(np.matrix('50 7 48 2')))+1
+    print 'Predicted [70 1 21 49]'
+    print neural_network.predict(np.matrix('70 1 21 49'))
+
+    print 'Predicted [66 12 76 -10]'
+    print neural_network.predict(np.matrix('66 12 76 -10'))
+
+    print 'Predicted [20 8 70 -50]'
+    print neural_network.predict(np.matrix('20 8 70 -50'))
+
+    print 'Predicted Something Just Like This by The Chainsmokers'
+    print neural_network.predict(np.matrix('8 9 5 -3'))
 
 
     print 'theta_1'
