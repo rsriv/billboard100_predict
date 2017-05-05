@@ -1,6 +1,8 @@
 from sample import input_init
 import numpy as np
+import billboard as bb
 import sys
+import math
 #X features are [lastPos    weeks    rank    change]
 #X and Y are written to files
 #To access:
@@ -11,6 +13,16 @@ import sys
 
 #only run this to download training data
 #input_init.init_input(6000)
+def roundup(x):
+    return int(math.ceil(x / 10.0)) * 10
+
+
+def is_num(string):
+    try:
+        int(string)
+        return True
+    except ValueError:
+        return False
 
 
 class NeuralNetwork:
@@ -76,9 +88,11 @@ class NeuralNetwork:
 
 if __name__ == '__main__':
     if len(sys.argv) > 2:
-        print 'Too Many Arguments; use -help for more info'
+        print '\nToo Many Arguments; use -help for more info\n'
         exit()
-
+    elif len(sys.argv) < 2:
+        print '\nNot Enough Arguments; use -help for more info\n'
+        exit()
     #print sys.argv[1]
     options = sys.argv[1]
 
@@ -149,23 +163,56 @@ if __name__ == '__main__':
 
         NeuralNetwork.Theta1 = np.matrix(theta1_data)
         NeuralNetwork.Theta2 = np.matrix(theta2_data)
-        print 'Predicted [3 20 2 1]'
-        print neural_network.predict(np.matrix('3 20 2 1'))
 
-        print 'Predicted [99 30 98 1]'
-        print neural_network.predict(np.matrix('99 30 98 1'))
+        #Collect last week's chart and this week's chart
 
-        print 'Predicted [70 1 21 49]'
-        print neural_network.predict(np.matrix('70 1 21 49'))
+        chart_current = bb.ChartData('hot-100')
+        chart_last = bb.ChartData('hot-100',chart_current.previousDate)
+        X_current = np.matrix('')
+        Y_last = np.matrix('')
 
-        print 'Predicted [66 12 76 -10]'
-        print neural_network.predict(np.matrix('66 12 76 -10'))
+        print 'Next Week\'s Prediction: '
+        for i in range (0,100):
+            song_current = chart_current[i]
+            change_current = 0
+            if is_num(song_current.change):
+                change_current = int(song_current.change)
+            x_current = np.matrix([[song_current.lastPos, song_current.weeks, song_current.rank, change_current]])
+            prediction = roundup(neural_network.predict(x_current))
+            print str(i+1) + '. ' + str(song_current) + ' Next Week\'s Prediction: ' + str(prediction) + ' to ' + str(prediction-9)
 
-        print 'Predicted [20 8 70 -50]'
-        print neural_network.predict(np.matrix('20 8 70 -50'))
+        print '\n\nThis Week\'s Prediction: '
+        count = 0
+        for i in range (0,100):
+            song_current = chart_current[i]
+            song_last = chart_last[i]
+            change_last = 0
+            if is_num(song_last.change):
+                change_last = int(song_last.change)
+            x_last = np.matrix([[song_last.lastPos, song_last.weeks, song_last.rank, change_last]])
+            prediction = roundup(neural_network.predict(x_last))
+            print str(i+1) + '. ' + str(song_last) + ' -- This Week\'s Prediction: ' + str(prediction) + ' to ' + str(prediction-9)
+            if i%10 == 9:
+                print ''
+                #print x_last
 
-        print 'Predicted Something Just Like This by The Chainsmokers'
-        print neural_network.predict(np.matrix('8 9 5 -3'))
+        # print 'Predicted [3 20 2 1]'
+        # print neural_network.predict(np.matrix('3 20 2 1'))
+        #
+        # print 'Predicted [99 30 98 1]'
+        # print neural_network.predict(np.matrix('99 30 98 1'))
+        #
+        # print 'Predicted [70 1 21 49]'
+        # print neural_network.predict(np.matrix('70 1 21 49'))
+        #
+        # print 'Predicted [66 12 76 -10]'
+        # print neural_network.predict(np.matrix('66 12 76 -10'))
+        #
+        # print 'Predicted [20 8 70 -50]'
+        # print neural_network.predict(np.matrix('20 8 70 -50'))
+        #
+        #print 'Predicted Something Just Like This by The Chainsmokers'
+        #print neural_network.predict(np.matrix('5 9 8 -3'))
 
 
     #print 'Predicting [3 20 2 1]'
