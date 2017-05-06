@@ -63,7 +63,7 @@ python billboard_predict.py -help
 
 Feedforward feature set through 3 layers (single hidden layer) with nodes using a sigmoid activation function to compute a prediction h. Compute cost then backpropogate to get gradients for each parameter Theta. Perform gradient descent by updating parameters using gradients from backpropagation. Repeat until convergence is roughly achieved.
 
-###Experimental Notes
+### Experimental Notes
 Through 100 training iterations, achieved ~16% top-100 accuracy and 60% top-10
 accuracy.
 
