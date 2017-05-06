@@ -199,7 +199,7 @@ if __name__ == '__main__':
                 change_last = int(song_last.change)
             x_last = np.matrix([[song_last.lastPos, song_last.weeks, song_last.rank, change_last]])
             prediction = roundup(neural_network.predict(x_last))
-            print str(i+1) + '. ' + str(song_last) + ' -- This Week\'s Prediction: ' + str(prediction) + ' to ' + str(prediction-9)
+            print str(i+1) + '. ' + str(song_last) + ' -- This Week\'s Prediction: ' + str(prediction) + '-' + str(prediction-9)
             if i%10 == 9:
                 print ''
             Y_last.append(prediction)
@@ -234,10 +234,10 @@ if __name__ == '__main__':
                         ten_count += 1
 
             if verbose == False or correct == False:
-                print str(i+1) + '. ' + str(song_current) + ' Next Week\'s Prediction: ' + str(prediction) + ' to ' + str(prediction-9)
+                print str(i+1) + '. ' + str(song_current) + ' -- Next Week\'s Prediction: ' + str(prediction) + '-' + str(prediction-9)
             else:
                 if correct == True:
-                    print str(i+1) + '. ' + str(song_current) + ' Next Week\'s Prediction: ' + str(prediction) + ' to ' + str(prediction-9) + ' (Correctly predicted last week)'
+                    print str(i+1) + '. ' + str(song_current) + ' -- Next Week\'s Prediction: ' + str(prediction) + '-' + str(prediction-9) + ' (Correctly predicted last week)'
 
             if i%10 == 9:
                 print ''

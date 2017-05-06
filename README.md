@@ -58,7 +58,6 @@ python billboard_predict.py -help
 * [billboard.py](https://github.com/guoguo12/billboard-charts) - API for collecting chart data
 * [NumPy](http://www.numpy.org) - Framework for facilitating advanced computations
 
-
 ##Notes
 ### Training Algorithm - How it Works
 
