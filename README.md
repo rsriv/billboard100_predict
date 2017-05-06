@@ -58,20 +58,20 @@ python billboard_predict.py -help
 * [billboard.py](https://github.com/guoguo12/billboard-charts) - API for collecting chart data
 * [NumPy](http://www.numpy.org) - Framework for facilitating advanced computations
 
-##Notes
+## Notes
 ### Training Algorithm - How it Works
 
 Feedforward feature set through 3 layers (single hidden layer) with nodes using a sigmoid activation function to compute a prediction h. Compute cost then backpropogate to get gradients for each parameter Theta. Perform gradient descent by updating parameters using gradients from backpropagation. Repeat until convergence is roughly achieved.
 
-###Experimental Notes
+### Experimental Notes
 Through 100 training iterations, achieved ~16% top-100 accuracy and 60% top-10
 accuracy.
 
-Through 1000 training iterations, achieved ~25 top-100 accuracy and 60% top-10
+Through 1000 training iterations, achieved ~25% top-100 accuracy and 60% top-10
 accuracy.
 
-Through 10000 training iterations, achieved ~27 top-100 accuracy and 60% top-10
+Through 10000 training iterations, achieved ~27% top-100 accuracy and 60% top-10
 accuracy.
 
-Through 20000 training iterations, achieved ~26 top-100 accuracy and 50% top-10
+Through 20000 training iterations, achieved ~26% top-100 accuracy and 50% top-10
 accuracy.
