@@ -67,10 +67,10 @@ def init_input(n):
                 X = np.concatenate((X, x))
         count += 1
         #print X
-        print Y.shape
+        #print Y.shape
     #print X.shape
     #print X
-    print Y.shape
+    #print Y.shape
     #print X.shape
     np.savetxt(yfile, Y, fmt="%d", comments='')
     np.savetxt(xfile, X, fmt="%d", comments='')

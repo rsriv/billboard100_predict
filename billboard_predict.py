@@ -3,6 +3,9 @@ import numpy as np
 import billboard as bb
 import sys
 import math
+import datetime
+import time
+
 #X features are [lastPos    weeks    rank    change]
 #X and Y are written to files
 #To access:
@@ -54,10 +57,10 @@ class NeuralNetwork:
             output = a3
 
             if verbose == True:
-                print 'Output iteration '+ str(i)
+                print 'Output of Iteration '+ str(i)
                 print output
             else:
-                print 'Training iteration '+ str(i)
+                print '.',
 
             #backpropagation
             delta_3 = Y - output
@@ -87,6 +90,7 @@ class NeuralNetwork:
         return np.multiply(self.__sigmoid(x), 1-self.__sigmoid(x))
 
 if __name__ == '__main__':
+    start_time = time.time()
     if len(sys.argv) > 2:
         print '\nToo Many Arguments; use -help for more info\n'
         exit()
@@ -99,12 +103,14 @@ if __name__ == '__main__':
     verbose = False
     train = False
     predict = False
+    get_data = False
 
     if 'help' in options:
-        print '\n-v       verbose     use for outputting prediction after each training iteration'
+        print '\n-v       verbose     output raw prediction after each training iteration'
         print '-t       train       train neural network and write parameters to file'
         print '-p       predict     predict current chart\'s performance next week and this week\'s chart (to test accuracy)'
-        print '-help    help        displays this\n'
+        print '-d       get data    download up-to-date Billboard Chart history data'
+        print '-help    help        display this\n'
         exit()
     if 'v' in options:
         verbose = True
@@ -112,8 +118,13 @@ if __name__ == '__main__':
         train = True
     if 'p' in options:
         predict = True
+    if 'd' in options:
+        get_data = True
+        print 'Fetching past Billboard Chart data. This will take some time...'
+        input_init.init_input(6000)
+        print '...Data download complete.'
 
-    if verbose == False and train == False and predict == False and 'help' not in options:
+    if verbose == False and train == False and predict == False and get_data == False and 'help' not in options:
         print '\nInvalid options; -help for more information\n'
         exit()
     #load training data
@@ -131,6 +142,7 @@ if __name__ == '__main__':
     X = np.matrix(xdata)
     Y = np.matrix(ydata)
 
+    #Train option
     if train == True:
         neural_network.train(X, Y, 10000, verbose)
         Theta1_file = 'data/theta1file.txt'
@@ -144,12 +156,14 @@ if __name__ == '__main__':
         theta1_file.close()
         theta2_file.close()
 
+    #Verbose option
     if verbose == True:
         print 'After Training Theta1'
         print NeuralNetwork.Theta1
         print 'After Training Theta2'
         print NeuralNetwork.Theta2
 
+    #Predict option
     if predict == True:
         Theta1_file = 'data/theta1file.txt'
         theta1_file = open(Theta1_file)
@@ -168,21 +182,13 @@ if __name__ == '__main__':
 
         chart_current = bb.ChartData('hot-100')
         chart_last = bb.ChartData('hot-100',chart_current.previousDate)
+        date_current = datetime.datetime.strptime(chart_current.date, "%Y-%m-%d")
+        delta = datetime.timedelta(days=7)
+        date_next = delta + date_current
         X_current = np.matrix('')
-        Y_last = np.matrix('')
 
-        print 'Next Week\'s Prediction: '
-        for i in range (0,100):
-            song_current = chart_current[i]
-            change_current = 0
-            if is_num(song_current.change):
-                change_current = int(song_current.change)
-            x_current = np.matrix([[song_current.lastPos, song_current.weeks, song_current.rank, change_current]])
-            prediction = roundup(neural_network.predict(x_current))
-            print str(i+1) + '. ' + str(song_current) + ' Next Week\'s Prediction: ' + str(prediction) + ' to ' + str(prediction-9)
-
-        print '\n\nThis Week\'s Prediction: '
-        count = 0
+        Y_last = []
+        print '\nThis week\'s prediction for week of '+str(date_current)
         for i in range (0,100):
             song_current = chart_current[i]
             song_last = chart_last[i]
@@ -194,8 +200,54 @@ if __name__ == '__main__':
             print str(i+1) + '. ' + str(song_last) + ' -- This Week\'s Prediction: ' + str(prediction) + ' to ' + str(prediction-9)
             if i%10 == 9:
                 print ''
+            Y_last.append(prediction)
                 #print x_last
+        #print Y_last
 
+        total_valid = 0
+        count = 0
+        ten_valid = 0
+        ten_count = 0
+
+        print '\n\nNext week\'s prediction for week of '+str(date_next)
+        for i in range (0,100):
+            correct = False
+            song_current = chart_current[i]
+            change_current = 0
+            if is_num(song_current.change):
+                change_current = int(song_current.change)
+            x_current = np.matrix([[song_current.lastPos, song_current.weeks, song_current.rank, change_current]])
+            prediction = roundup(neural_network.predict(x_current))
+
+            if song_current.lastPos > 0 and song_current.lastPos <= 100:
+                total_valid += 1
+                index = Y_last[song_current.lastPos - 1] - song_current.rank
+                if  index >= 0 and index <= 10:
+                    count += 1
+                    correct = True
+                #top ten accuracy calculation
+                if song_current.rank<=10:
+                    ten_valid += 1
+                    if  index >= 0 and index <= 10:
+                        ten_count += 1
+
+            if verbose == False or correct == False:
+                print str(i+1) + '. ' + str(song_current) + ' Next Week\'s Prediction: ' + str(prediction) + ' to ' + str(prediction-9)
+            else:
+                if correct == True:
+                    print str(i+1) + '. ' + str(song_current) + ' Next Week\'s Prediction: ' + str(prediction) + ' to ' + str(prediction-9) + ' (Correctly predicted last week)'
+
+            if i%10 == 9:
+                print ''
+
+        #accuracy statistics
+        accuracy = float(count)/total_valid*100
+        ten_accuracy = float(ten_count)/ten_valid*100
+        #print 'count '+str(count)
+        #print 'total_valid' + str(total_valid)
+        print 'This Week\'s accuracy: ' + str(accuracy)+'%.\n'
+        print 'This Week\'s Top Ten accuracy: ' + str(ten_accuracy)+'%.\n'
+    print("--- done in %s seconds ---\n" % (time.time() - start_time))
         # print 'Predicted [3 20 2 1]'
         # print neural_network.predict(np.matrix('3 20 2 1'))
         #
