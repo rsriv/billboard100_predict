@@ -56,6 +56,8 @@ class NeuralNetwork:
             #print z3
             output = a3
 
+            #J = int(np.sum(sum(np.multiply(-1*AA, np.log(output)) - np.multiply((1-AA)), np.log(1-output)),axis=1))
+
             if verbose == True:
                 print 'Output of Iteration '+ str(i)
                 print output
