@@ -1,5 +1,5 @@
 # billboard100_predict
-Artificial Neural Network (ANN) built from scratch to predict deciles of popular songs based on their chart histories. Uses one hidden layer and trained using backpropagation and gradient descent.
+Artificial Neural Network (ANN) built from scratch to predict the Billboard Hot-100 Chart positions of popular songs based on their chart histories. Uses one hidden layer and trained using backpropagation and gradient descent.
 
 ## Getting Started
 
