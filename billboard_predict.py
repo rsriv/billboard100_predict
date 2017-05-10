@@ -85,7 +85,7 @@ class NeuralNetwork:
 
 
             if verbose == True:
-                J = int(np.sum(np.multiply(-1*Y, np.log(output)) - np.multiply(1-Y, np.log(1-output))))
+                J = float(np.sum(np.multiply(-1*Y, np.log(output)) - np.multiply(1-Y, np.log(1-output)))/X.shape[0])
                 print 'Cost of Iteration '+ str(i)+' -- '+str(J)
                 #print output
             else:
