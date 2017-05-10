@@ -222,7 +222,7 @@ if __name__ == '__main__':
 
         total_valid = 0
         count = 0
-        ten_valid = 0
+        ten_valid = 10
         ten_count = 0
         validity = 100 * [False]
         print '\n\nNext week\'s prediction for week of '+str(date_next)
@@ -234,26 +234,34 @@ if __name__ == '__main__':
                 change_current = int(song_current.change)
             x_current = np.matrix([[song_current.lastPos, song_current.weeks, song_current.rank, change_current]])
             prediction = roundup(neural_network.predict(x_current))
-
+            index = Y_last[song_current.lastPos - 1]
             if song_current.lastPos > 0 and song_current.lastPos <= 100:
                 total_valid += 1
                 index = Y_last[song_current.lastPos - 1]
-                if  index > 0 and song_current.rank < BRACKET[index] and song_current.rank >= BRACKET[index-1] or index == 0 and song_current.rank < BRACKET[index]:
+                if  index > 0 and song_current.rank <= BRACKET[index] and song_current.rank > BRACKET[index-1] or index == 0 and song_current.rank < BRACKET[index]:
                     count += 1
                     correct = True
                     validity[song_current.lastPos - 1] = True
 
                 #top ten accuracy calculation
                 if song_current.rank<=10:
-                    ten_valid += 1
-                    if  index > 0 and song_current.rank < BRACKET[index] and song_current.rank >= BRACKET[index-1] or index == 0 and song_current.rank < BRACKET[index]:
+                    if  index == 0:
                         ten_count += 1
 
+            low = 0
+            high = 0
+            if prediction == 0:
+                low = 1
+                high = 10
+            else:
+                low = BRACKET[prediction - 1]
+                high = BRACKET[prediction]
+
             if verbose == False or correct == False:
-                print str(i+1) + '. ' + str(song_current) + ' -- Next Week\'s Prediction: ' + str(BRACKET[index]) + '-' + str(BRACKET[index-1])
+                print str(i+1) + '. ' + str(song_current) + ' -- Next Week\'s Prediction: ' + str(low) + '-' + str(high)
             else:
                 if correct == True:
-                    print str(i+1) + '. ' + str(song_current) + ' -- Next Week\'s Prediction: ' + str(BRACKET[index]) + '-' + str(BRACKET[index-1]) + ' (Correctly predicted last week)'
+                    print str(i+1) + '. ' + str(song_current) + ' -- Next Week\'s Prediction: ' + str(low) + '-' + str(high) + ' (Correctly predicted last week)'
 
             if i%10 == 9:
                 print ''
@@ -276,7 +284,6 @@ if __name__ == '__main__':
             else:
                 low = BRACKET[prediction - 1]
                 high = BRACKET[prediction]
-
 
             if validity[i] == False:
                 print str(i+1) + '. ' + str(song_last) + ' -- This Week\'s Prediction: ' + str(low) + '-' + str(high)
