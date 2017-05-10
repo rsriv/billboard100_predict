@@ -1,5 +1,5 @@
 # billboard100_predict
-Artificial Neural Network (ANN) built from scratch to predict the Billboard Hot-100 Chart positions of popular songs based on their chart histories. Uses one hidden layer and trained using backpropagation and gradient descent.
+Artificial Neural Network (ANN) built from scratch to estimate the Billboard Hot-100 Chart positions of popular songs based on their chart histories. Uses one hidden layer and trained using backpropagation and gradient descent.
 
 ## Getting Started
 
@@ -64,6 +64,11 @@ python billboard_predict.py -help
 Feedforward feature set through 3 layers (single hidden layer) with nodes using a sigmoid activation function to compute a prediction h. Compute cost then backpropogate to get gradients for each parameter Theta. Perform gradient descent by updating parameters using gradients from backpropagation. Repeat until convergence is roughly achieved.
 
 ### Experimental Notes
+
+Achieved ~64% accuracy over 4 bins for top-100. 4, exponentially-scaled bins (1-10, 10-35, 35-60, 60-100) were used because in practice, increments in a single's position become more important and relevant as you ascend the chart. Ex. 99th vs. 98th is a lot less significant than 2nd vs. 1st.
+<!---
+
+
 Through 100 training iterations, achieved ~16% top-100 accuracy and 60% top-10
 accuracy.
 
@@ -75,3 +80,4 @@ accuracy.
 
 Through 20000 training iterations, achieved ~26% top-100 accuracy and 50% top-10
 accuracy.
+-->
