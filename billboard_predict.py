@@ -69,12 +69,25 @@ class NeuralNetwork:
             a3 = self.__sigmoid(z3)
             #print z3
             output = a3
+            output_bin = np.matrix('')
+            for j in range(0,output.shape[1]):
+                row = output[j]
+                row = row.T
+                index = np.argmax(row)
+                temp = np.matrix(np.zeros((100,1)))
+                temp[index] = 1
+                if output_bin.shape == (1,0):
+                    output_bin = temp.T
+                else:
+                    np.concatenate((output_bin, temp.T))
 
-            #J = int(np.sum(sum(np.multiply(-1*AA, np.log(output)) - np.multiply((1-AA)), np.log(1-output)),axis=1))
+            #Where AA is a binary matrix of output
+
 
             if verbose == True:
-                print 'Output of Iteration '+ str(i)
-                print output
+                J = int(np.sum(np.multiply(-1*Y, np.log(output)) - np.multiply(1-Y, np.log(1-output))))
+                print 'Cost of Iteration '+ str(i)+' -- '+str(J)
+                #print output
             else:
                 print '.',
 
